@@ -1,10 +1,11 @@
 package org.nikita.SpringLandmarkREST.controller;
 
 import org.nikita.SpringLandmarkREST.entity.Landmark;
-import org.nikita.SpringLandmarkREST.exception.LandmarkNotFoundException;
+import org.nikita.SpringLandmarkREST.entity.enums.LandmarkType;
 import org.nikita.SpringLandmarkREST.model.LandmarkRepository;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -16,14 +17,26 @@ public class LandmarkController {
     }
 
     @GetMapping("/landmarks")
-    List<Landmark> all(){
-        return repository.findAll();
+    List<Landmark> all(
+            @RequestParam(required = false, name="SortBy") String sortParam,
+            @RequestParam(required = false, name = "Type") LandmarkType typeParam) {
+
+        List<Landmark> landmarks = repository.findAll();
+
+        sortLandmarksBy(landmarks, sortParam);
+        filterLandmarksByType(landmarks, typeParam);
+
+        return landmarks;
     }
 
-    @GetMapping("/landmarks/{id}")
-    Landmark one(@PathVariable long id){
-        return repository.findById(id)
-                .orElseThrow(() -> new LandmarkNotFoundException(id));
+    private void sortLandmarksBy(List<Landmark> landmarks, String sortParam){
+        if (sortParam.equals("name")) {
+            landmarks.sort(Comparator.comparing(Landmark::getName));
+        }
+    }
+
+    private void filterLandmarksByType(List<Landmark> landmarks, LandmarkType type){
+        landmarks.removeIf(l -> !l.getType().equals(type));
     }
 
     @PostMapping("/landmarks")
@@ -35,11 +48,7 @@ public class LandmarkController {
     Landmark updateLandmark(@RequestBody Landmark newLandmark, @PathVariable long id){
         return repository.findById(id)
                 .map(landmark -> {
-                    landmark.setName(newLandmark.getName());
                     landmark.setDescription(newLandmark.getDescription());
-                    landmark.setType(newLandmark.getType());
-                    landmark.setLocation(newLandmark.getLocation());
-                    landmark.setCreationDate(newLandmark.getCreationDate());
                     return repository.save(landmark);
                 })
                 .orElseGet(()-> {
