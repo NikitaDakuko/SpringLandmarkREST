@@ -1,19 +1,22 @@
 package org.nikita.SpringLandmarkREST.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
-public class Service {
+public class Service implements Serializable {
     @Id
     @GeneratedValue
     private long id;
     private String name;
     private String description;
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(name = "landmark",
+            joinColumns = {@JoinColumn(name = "service_id")},
+            inverseJoinColumns = {@JoinColumn(name = "landmark_id")})
     private List<Landmark> landmarks;
 
     public Service(long id, String name, String description, List<Landmark> landmarks) {
@@ -56,10 +59,10 @@ public class Service {
     }
 
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
         if (this == o)
             return true;
-        if(! (o instanceof Service service))
+        if (!(o instanceof Service service))
             return false;
         return Objects.equals(this.id, service.id) &&
                 Objects.equals(this.name, service.name) &&
@@ -68,7 +71,7 @@ public class Service {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "Service{" +
                 "id=" + this.id +
                 ", name=" + this.name +

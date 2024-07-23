@@ -1,15 +1,14 @@
 package org.nikita.SpringLandmarkREST.entity;
 
+import jakarta.persistence.*;
 import org.nikita.SpringLandmarkREST.entity.enums.LandmarkType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
 @Entity
-public class Landmark {
+public class Landmark implements Serializable {
     @Id
     @GeneratedValue
     private long id;
@@ -17,6 +16,8 @@ public class Landmark {
     private Date creationDate;
     private String description;
     private LandmarkType type;
+    @ManyToOne
+    @JoinColumn(name = "location_id", nullable = false)
     private Location location;
 
     public Landmark(long id, String name, Date creationDate, String shortDescription, LandmarkType type, Location location) {

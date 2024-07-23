@@ -3,17 +3,20 @@ package org.nikita.SpringLandmarkREST.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
-public class Location {
+public class Location implements Serializable {
     @Id
     @GeneratedValue
     private long id;
     private String name;
     private long population;
+    @OneToMany(mappedBy = "location")
     private List<Landmark> landmarks;
     private boolean metroAvailability;
 
