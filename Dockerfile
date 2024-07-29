@@ -1,6 +1,14 @@
-FROM amazoncorretto:17
+FROM eclipse-temurin:21
+FROM maven
 
-ARG JAR_FILE=target/*.war
-COPY ${JAR_FILE} application.war
-CMD apt-get update -y
-ENTRYPOINT ["java", "-Xmx2048M", "-jar", "/application.war"]
+WORKDIR /app
+ADD pom.xml /app
+RUN mvn verify clean --fail-never
+
+COPY . /app
+RUN mvn -v
+RUN mvn clean install
+EXPOSE 8080
+COPY ./target/*.war /app.war
+
+ENTRYPOINT ["java", "-Xmx2048M", "-jar", "/app.war"]

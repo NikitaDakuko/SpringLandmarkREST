@@ -3,14 +3,14 @@ version: '3.8'
 services:
   app:
     image: 'docker-spring-boot-postgres:latest'
+    ports:
+      - 8080:8080
     build:
       context: .
     container_name: app
     depends_on:
       - db
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=admin
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/landmark
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=admin
@@ -18,8 +18,9 @@ services:
 
   db:
     image: postgres
-    container_name: db
+    ports:
+      - 5432:5432
+    container_name: postgreSQL
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=landmark
