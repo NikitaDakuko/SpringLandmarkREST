@@ -1,0 +1,13 @@
+spring:
+  application:
+    name=Spring-REST-task
+  datasource:
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform=org.hibernate.dialect.PostgreSQL9Dialect
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: true
+  config:
+    use-legacy-processing: true
+debug: false
